@@ -7,11 +7,19 @@ function HELPERS.is_door_open()
     if not XA_CABIN_PLANE_CONFIG.DOOR["Func"] then
         XA_CABIN_LOGGER.write_log("Initializing DOOR config and function.")
 
-        -- Initialize the DOOR dataref table if not done
+        -- Initialize the DOOR Dataref if it hasn't been set already
         if XA_CABIN_DATAREFS.DOOR == nil then
-            XA_CABIN_DATAREFS.DOOR = dataref_table(XA_CABIN_PLANE_CONFIG.DOOR.dataref_str)
-            XA_CABIN_LOGGER.write_log("DOOR Dataref initialized: " .. XA_CABIN_PLANE_CONFIG.DOOR.dataref_str)
+            -- Check if DOOR dataref string is configured
+            if XA_CABIN_PLANE_CONFIG.DOOR and XA_CABIN_PLANE_CONFIG.DOOR.dataref_str then
+                XA_CABIN_DATAREFS.DOOR = dataref_table(XA_CABIN_PLANE_CONFIG.DOOR.dataref_str)
+                XA_CABIN_LOGGER.write_log("DOOR Dataref initialized: " .. XA_CABIN_PLANE_CONFIG.DOOR.dataref_str)
+            else
+                -- Toliss Aircraft Adjustment if DOOR config is not available
+                XA_CABIN_DATAREFS.DOOR = dataref_table("AirbusFBW/PaxDoorModeArray")
+                XA_CABIN_LOGGER.write_log("DOOR Dataref initialized: AirbusFBW/PaxDoorModeArray")
+            end
         end
+
 
         -- Validate operator and threshold
         local operator = XA_CABIN_PLANE_CONFIG.DOOR.operator
